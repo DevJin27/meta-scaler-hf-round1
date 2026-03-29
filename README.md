@@ -5,6 +5,7 @@ colorFrom: blue
 colorTo: indigo
 sdk: docker
 app_port: 8000
+short_description: RL benchmark for AI agents triaging emails
 tags:
   - openenv
   - agent-environment
@@ -17,9 +18,9 @@ license: mit
 
 # EmailTriage — OpenEnv Environment
 
-A **deterministic, multi-objective benchmark** for training and evaluating AI agents on real-world customer-support email workflows.  Agents must classify, prioritize, tag, detect spam, and draft responses across an inbox — balancing speed, accuracy, SLA compliance, and response quality.
+Ever wondered how good an AI agent actually is at handling a messy inbox? EmailTriage is a benchmark that throws realistic customer-support emails at your agent and scores how well it routes, prioritizes, tags, and responds to them — all under a step budget. Think of it as a gym for email-handling agents, built on the [OpenEnv spec](https://github.com/meta-pytorch/OpenEnv).
 
-Deployed as a [Hugging Face Space](https://huggingface.co/spaces) and fully compatible with the [OpenEnv spec](https://github.com/meta-pytorch/OpenEnv).
+It's **deterministic** (same emails, same ground truth every run), **multi-objective** (speed vs. accuracy vs. response quality), and ships as a ready-to-use Docker-based [Hugging Face Space](https://huggingface.co/spaces/isodiscrete/email-triage-openenv).
 
 ---
 
