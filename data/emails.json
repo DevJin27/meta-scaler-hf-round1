@@ -1,0 +1,453 @@
+{
+  "emails": [
+    {
+      "email_id": "e001",
+      "subject": "Incorrect charge on my account - need immediate resolution",
+      "body": "Hello,\n\nI noticed an unauthorized charge of $149.99 on my account this month. I never authorized this billing and demand a full refund immediately. This is completely unacceptable.\n\nMy account number is ACC-78234. Please investigate this billing error and credit my account. I have been a customer for 3 years and this kind of mistake is very frustrating.\n\nRegards,\nMichael Torres",
+      "sender": "michael.torres@gmail.com",
+      "timestamp": "2025-03-10T09:14:00Z",
+      "metadata": {
+        "account_tier": "premium",
+        "is_vip": false,
+        "revenue_impact": 149.99
+      },
+      "_ground_truth": {
+        "department": "Billing",
+        "priority": "High",
+        "tags": ["billing-dispute", "complaint", "refund"],
+        "is_spam": false,
+        "kb_keywords": ["refund", "charge", "billing", "account", "unauthorized"],
+        "response_must_include": ["apologize", "investigate", "refund", "24 hours", "account"],
+        "should_escalate": false
+      }
+    },
+    {
+      "email_id": "e002",
+      "subject": "Cannot log in to my account - forgot password",
+      "body": "Hi,\n\nI am unable to log in to my account. I have tried resetting my password twice but I keep getting an error message saying 'invalid token'. The reset link in the email does not seem to work.\n\nMy username is jsmith_2020. Please help me regain access to my account as soon as possible. I have important documents stored there.\n\nThanks,\nJane Smith",
+      "sender": "j.smith@yahoo.com",
+      "timestamp": "2025-03-10T10:22:00Z",
+      "metadata": {
+        "account_tier": "standard",
+        "is_vip": false,
+        "revenue_impact": 0.0
+      },
+      "_ground_truth": {
+        "department": "Technical Support",
+        "priority": "Medium",
+        "tags": ["password-reset", "technical-issue"],
+        "is_spam": false,
+        "kb_keywords": ["password", "reset", "login", "access", "token", "account"],
+        "response_must_include": ["reset", "link", "token", "access", "help"],
+        "should_escalate": false
+      }
+    },
+    {
+      "email_id": "e003",
+      "subject": "Where is my order #ORD-992341?",
+      "body": "Hello Customer Support,\n\nI placed an order (#ORD-992341) 5 days ago but I have not received any shipping confirmation. The estimated delivery was 3 days ago. Could you please provide an update on the status of my order?\n\nI live at 142 Oak Street, Portland OR 97201.\n\nBest,\nRobert Chen",
+      "sender": "robert.chen@outlook.com",
+      "timestamp": "2025-03-10T11:05:00Z",
+      "metadata": {
+        "account_tier": "standard",
+        "is_vip": false,
+        "revenue_impact": 89.99
+      },
+      "_ground_truth": {
+        "department": "Account Management",
+        "priority": "Low",
+        "tags": ["order-status", "inquiry"],
+        "is_spam": false,
+        "kb_keywords": ["order", "shipping", "tracking", "delivery", "status"],
+        "response_must_include": ["order", "tracking", "delivery", "status", "update"],
+        "should_escalate": false
+      }
+    },
+    {
+      "email_id": "e004",
+      "subject": "Pricing for enterprise plan - 500 user licenses",
+      "body": "Hi,\n\nWe are a mid-size company (DataFlow Inc.) looking to evaluate your enterprise plan for approximately 500 users. Could you provide pricing information and arrange a demo?\n\nWe are currently comparing several vendors and would like to make a decision within 2 weeks.\n\nPlease contact our procurement team lead at p.williams@dataflow.com\n\nRegards,\nPriya Williams\nHead of IT Procurement",
+      "sender": "p.williams@dataflow.com",
+      "timestamp": "2025-03-10T13:30:00Z",
+      "metadata": {
+        "account_tier": "standard",
+        "is_vip": false,
+        "revenue_impact": 50000.0
+      },
+      "_ground_truth": {
+        "department": "Sales",
+        "priority": "High",
+        "tags": ["inquiry"],
+        "is_spam": false,
+        "kb_keywords": ["pricing", "enterprise", "plan", "demo", "licenses"],
+        "response_must_include": ["pricing", "demo", "enterprise", "contact", "team"],
+        "should_escalate": false
+      }
+    },
+    {
+      "email_id": "e005",
+      "subject": "Question about employee benefits enrollment deadline",
+      "body": "Hello HR Team,\n\nI joined the company 3 months ago and I'm not sure when the benefits enrollment window closes. Can you let me know the deadline for health insurance and 401k enrollment for new employees?\n\nAlso, is there a guide for the enrollment process?\n\nThank you,\nAlex Park\nEmployee ID: EMP-44521",
+      "sender": "a.park@company-internal.com",
+      "timestamp": "2025-03-10T14:15:00Z",
+      "metadata": {
+        "account_tier": "standard",
+        "is_vip": false,
+        "revenue_impact": 0.0
+      },
+      "_ground_truth": {
+        "department": "HR",
+        "priority": "Medium",
+        "tags": ["inquiry"],
+        "is_spam": false,
+        "kb_keywords": ["benefits", "enrollment", "deadline", "employee", "health", "insurance"],
+        "response_must_include": ["deadline", "enrollment", "benefits", "guide", "HR"],
+        "should_escalate": false
+      }
+    },
+    {
+      "email_id": "e006",
+      "subject": "URGENT: Production database is completely down - all customers affected",
+      "body": "CRITICAL ISSUE - Production database server DOWN\n\nOur entire production database has been unreachable for the past 45 minutes. All 2,000 of our customers cannot access the system. We are losing approximately $3,000 per minute.\n\nError: Connection refused on port 5432. All replicas are also unreachable.\n\nThis is causing significant business impact. We need an engineer on this IMMEDIATELY.\n\nIncident ID: INC-2025-0310\nAccount: ENTERPRISE-7821\nContact: David Kumar (CTO) - +1-555-0123",
+      "sender": "d.kumar@techcorp-enterprise.com",
+      "timestamp": "2025-03-10T15:42:00Z",
+      "metadata": {
+        "account_tier": "enterprise",
+        "is_vip": true,
+        "revenue_impact": 180000.0
+      },
+      "_ground_truth": {
+        "department": "Technical Support",
+        "priority": "Critical",
+        "tags": ["service-outage", "technical-issue", "complaint"],
+        "is_spam": false,
+        "kb_keywords": ["database", "outage", "production", "down", "connection", "critical"],
+        "response_must_include": ["escalate", "engineer", "immediately", "priority", "investigate"],
+        "should_escalate": true
+      }
+    },
+    {
+      "email_id": "e007",
+      "subject": "Congratulations!! You have WON $1,000,000 - Claim now!!!",
+      "body": "CONGRATULATIONS WINNER!!!\n\nYou have been selected as the lucky winner of our international lottery!! You have won ONE MILLION DOLLARS ($1,000,000)!!!\n\nTo claim your prize, click here: http://suspicious-link.xyz/claim\n\nYou must respond within 24 hours or your prize will be forfeited!! Provide your bank account details to receive your winnings.\n\nThis is NOT spam. You are a genuine winner!\n\nClaim your FREE MONEY now!\n\nLottery International Committee",
+      "sender": "no-reply@lottery-prizes-winner.xyz",
+      "timestamp": "2025-03-10T16:00:00Z",
+      "metadata": {
+        "account_tier": "standard",
+        "is_vip": false,
+        "revenue_impact": 0.0
+      },
+      "_ground_truth": {
+        "department": "General",
+        "priority": "Low",
+        "tags": ["spam"],
+        "is_spam": true,
+        "kb_keywords": [],
+        "response_must_include": [],
+        "should_escalate": false
+      }
+    },
+    {
+      "email_id": "e008",
+      "subject": "Immediate full refund required - VIP account billing error",
+      "body": "I am extremely dissatisfied with the repeated billing errors on my VIP account.\n\nThis is the THIRD time this quarter I have been incorrectly charged. The latest erroneous charge is $892.50 applied on March 9th. My contract clearly states a fixed monthly fee of $299.\n\nI need:\n1. Immediate full refund of $892.50\n2. Written explanation of how this keeps happening\n3. Assurance this will never happen again\n\nI have been a premium customer for 5 years and I am seriously considering cancelling if this is not resolved today.\n\nSarah Mitchell\nVIP Account #VIP-0042",
+      "sender": "s.mitchell@mitchellconsulting.com",
+      "timestamp": "2025-03-10T09:30:00Z",
+      "metadata": {
+        "account_tier": "premium",
+        "is_vip": true,
+        "revenue_impact": 892.50
+      },
+      "_ground_truth": {
+        "department": "Billing",
+        "priority": "High",
+        "tags": ["refund", "complaint", "billing-dispute"],
+        "is_spam": false,
+        "kb_keywords": ["refund", "billing", "charge", "VIP", "contract", "error"],
+        "response_must_include": ["apologize", "refund", "investigate", "resolve", "priority"],
+        "should_escalate": false
+      }
+    },
+    {
+      "email_id": "e009",
+      "subject": "Feature request: Add dark mode to the mobile app",
+      "body": "Hi Product Team,\n\nI've been using your app for about 6 months now and overall I'm very happy with it. One feature I'd really love to see is dark mode support for the mobile app.\n\nMany people use the app in low-light environments and dark mode would be much easier on the eyes. It would also improve battery life on OLED screens.\n\nI know this is probably on your roadmap already but just wanted to add my voice to the request!\n\nThanks for the great product,\nTom Bradley",
+      "sender": "t.bradley@personal.com",
+      "timestamp": "2025-03-10T11:20:00Z",
+      "metadata": {
+        "account_tier": "standard",
+        "is_vip": false,
+        "revenue_impact": 0.0
+      },
+      "_ground_truth": {
+        "department": "General",
+        "priority": "Low",
+        "tags": ["feature-request", "feedback"],
+        "is_spam": false,
+        "kb_keywords": ["dark mode", "feature", "mobile", "app", "roadmap"],
+        "response_must_include": ["thank", "feedback", "consider", "roadmap"],
+        "should_escalate": false
+      }
+    },
+    {
+      "email_id": "e010",
+      "subject": "CRITICAL: My account has been hacked - unauthorized access detected",
+      "body": "My account has been compromised. I received alerts that someone logged in from Russia at 3 AM this morning. I did not authorize this access.\n\nI can see that the attacker changed my email address and attempted to access payment information. I have already changed my password but I am worried they may have already stolen data.\n\nMy account: linda.park@securecorp.com (Account #SEC-8821)\n\nPlease IMMEDIATELY:\n1. Lock my account\n2. Revert unauthorized changes\n3. Investigate what data was accessed\n4. Provide a full security audit\n\nThis is an emergency. I need a response within 1 hour.\n\nLinda Park",
+      "sender": "l.park.personal@gmail.com",
+      "timestamp": "2025-03-10T06:15:00Z",
+      "metadata": {
+        "account_tier": "premium",
+        "is_vip": false,
+        "revenue_impact": 0.0
+      },
+      "_ground_truth": {
+        "department": "Technical Support",
+        "priority": "Critical",
+        "tags": ["technical-issue", "complaint"],
+        "is_spam": false,
+        "kb_keywords": ["hacked", "compromised", "unauthorized", "security", "lock", "account"],
+        "response_must_include": ["lock", "security", "escalate", "immediately", "investigate"],
+        "should_escalate": true
+      }
+    },
+    {
+      "email_id": "e011",
+      "subject": "Question about my monthly invoice - line item clarification",
+      "body": "Hello Billing Team,\n\nI received my monthly invoice for February and I have a question about a line item. There is a charge listed as 'Professional Services Add-on - $45.00' that I don't recall signing up for.\n\nCan you clarify what this charge is for? If it's something I'm not using, I would like to know how to remove it from my plan.\n\nMy account number is ACC-56732.\n\nThank you,\nCarlos Mendez",
+      "sender": "c.mendez@businessmail.com",
+      "timestamp": "2025-03-10T14:45:00Z",
+      "metadata": {
+        "account_tier": "standard",
+        "is_vip": false,
+        "revenue_impact": 45.0
+      },
+      "_ground_truth": {
+        "department": "Billing",
+        "priority": "Medium",
+        "tags": ["inquiry", "billing-dispute"],
+        "is_spam": false,
+        "kb_keywords": ["invoice", "charge", "line item", "billing", "plan", "remove"],
+        "response_must_include": ["invoice", "charge", "clarify", "remove", "plan"],
+        "should_escalate": false
+      }
+    },
+    {
+      "email_id": "e012",
+      "subject": "Repeated billing errors - 4 months of incorrect charges - extremely frustrated",
+      "body": "I am writing this email as a FINAL WARNING before I escalate to my bank and file a chargeback.\n\nFor the past 4 consecutive months, I have been billed incorrectly:\n- November: Overcharged by $87.50\n- December: Overcharged by $87.50\n- January: Overcharged by $87.50\n- February: Overcharged by $87.50\n\nTotal: $350 in erroneous charges that I have reported EVERY SINGLE MONTH.\n\nEach time I report it, I am told it is fixed and then it happens again the next month. This is either gross incompetence or fraud.\n\nI demand:\n1. Immediate refund of $350\n2. Written root cause analysis\n3. $100 service credit for my wasted time\n4. Guarantee this will not happen again\n\nI will be sharing this experience publicly if not resolved within 48 hours.\n\nFrustrated beyond words,\nAmanda Richardson\nAccount: PREM-3301",
+      "sender": "a.richardson@lawyers.com",
+      "timestamp": "2025-03-10T08:00:00Z",
+      "metadata": {
+        "account_tier": "premium",
+        "is_vip": false,
+        "revenue_impact": 350.0
+      },
+      "_ground_truth": {
+        "department": "Billing",
+        "priority": "High",
+        "tags": ["billing-dispute", "complaint", "refund"],
+        "is_spam": false,
+        "kb_keywords": ["overcharged", "refund", "billing", "error", "credit", "resolve", "account", "invoice"],
+        "response_must_include": ["apologize", "refund", "investigate", "credit", "resolve", "48 hours"],
+        "should_escalate": true
+      }
+    },
+    {
+      "email_id": "e013",
+      "subject": "API integration consistently failing - breaking our production pipeline",
+      "body": "Dear Technical Support,\n\nWe are experiencing a critical issue with your REST API that is breaking our production data pipeline.\n\nDetails:\n- Endpoint: /api/v2/data/export\n- Error: 504 Gateway Timeout after exactly 30 seconds\n- Frequency: 100% failure rate since March 8th, 15:00 UTC\n- Our account: ENT-9921\n\nWe have tried:\n1. Reducing payload size (no improvement)\n2. Switching to async mode (same error)\n3. Using different API credentials (same error)\n4. Contacting your status page (shows all green, which is incorrect)\n\nThis is blocking our nightly data exports affecting 500 downstream users. We need this resolved urgently.\n\nPlease escalate to your API infrastructure team.\n\nBest,\nDr. James O'Brien\nCTO, DataStream Analytics",
+      "sender": "j.obrien@datastream-analytics.com",
+      "timestamp": "2025-03-10T10:30:00Z",
+      "metadata": {
+        "account_tier": "enterprise",
+        "is_vip": true,
+        "revenue_impact": 75000.0
+      },
+      "_ground_truth": {
+        "department": "Technical Support",
+        "priority": "High",
+        "tags": ["technical-issue", "complaint", "service-outage"],
+        "is_spam": false,
+        "kb_keywords": ["API", "timeout", "endpoint", "error", "pipeline", "credentials", "infrastructure"],
+        "response_must_include": ["escalate", "team", "investigate", "logs", "API", "resolve", "apologize"],
+        "should_escalate": true
+      }
+    },
+    {
+      "email_id": "e014",
+      "subject": "Request to permanently close my account",
+      "body": "Hello,\n\nAfter 5 years as a customer, I have made the difficult decision to close my account. I will be transitioning to a competitor due to the recent price increases which no longer fit our budget.\n\nI would like to:\n1. Export all my data before the account is closed\n2. Understand the account closure process and timeline\n3. Confirm that my data will be deleted per GDPR requirements\n4. Get confirmation of the final billing date\n\nPlease advise on the steps I need to take. I would like the account closed by March 31st.\n\nThank you for 5 years of service.\n\nRegards,\nNiamh O'Sullivan\nAccount: STD-44892",
+      "sender": "n.osullivan@eurotech.ie",
+      "timestamp": "2025-03-10T12:00:00Z",
+      "metadata": {
+        "account_tier": "standard",
+        "is_vip": false,
+        "revenue_impact": -1200.0
+      },
+      "_ground_truth": {
+        "department": "Account Management",
+        "priority": "Medium",
+        "tags": ["account-closure", "inquiry"],
+        "is_spam": false,
+        "kb_keywords": ["close", "account", "data", "export", "GDPR", "closure", "process", "billing", "confirm"],
+        "response_must_include": ["understand", "data", "export", "process", "confirm", "GDPR", "closure"],
+        "should_escalate": false
+      }
+    },
+    {
+      "email_id": "e015",
+      "subject": "URGENT: Payment processing failure affecting entire business operations",
+      "body": "This is an EMERGENCY.\n\nOur enterprise payment processing has completely failed. We have been unable to process any customer payments for the past 2 hours. This is directly impacting our revenue at approximately $15,000 per hour.\n\nAll payment attempts return: 'Transaction declined - Gateway Error 8821'\n\nAffected accounts: All 3 of our production merchant accounts (IDs: MERCH-001, MERCH-002, MERCH-003)\n\nWe have a major promotional event happening right now with peak traffic. Every minute of downtime is catastrophic.\n\nThis is a CRITICAL VIP account issue. We need your payment team on this call within 15 minutes.\n\nAccount Manager: Contact our CTO directly: +1-555-0199\nAccount: ENTERPRISE-VIP-0007",
+      "sender": "cto@megastore-enterprise.com",
+      "timestamp": "2025-03-10T16:30:00Z",
+      "metadata": {
+        "account_tier": "enterprise",
+        "is_vip": true,
+        "revenue_impact": 500000.0
+      },
+      "_ground_truth": {
+        "department": "Billing",
+        "priority": "Critical",
+        "tags": ["payment-failed", "complaint", "service-outage"],
+        "is_spam": false,
+        "kb_keywords": ["payment", "failed", "gateway", "processing", "error", "merchant", "account", "resolve"],
+        "response_must_include": ["priority", "immediately", "payment", "team", "escalate", "resolve", "apologize"],
+        "should_escalate": true
+      }
+    },
+    {
+      "email_id": "e016",
+      "subject": "Please update my shipping address",
+      "body": "Hi,\n\nI recently moved and need to update my shipping address on file.\n\nOld address: 55 Maple Ave, Boston MA 02101\nNew address: 200 Harbor View Drive, Boston MA 02108\n\nPlease update this before my next order ships.\n\nThanks,\nKevin Walsh\nAccount: STD-22781",
+      "sender": "k.walsh@personal.com",
+      "timestamp": "2025-03-10T13:00:00Z",
+      "metadata": {
+        "account_tier": "standard",
+        "is_vip": false,
+        "revenue_impact": 0.0
+      },
+      "_ground_truth": {
+        "department": "Account Management",
+        "priority": "Low",
+        "tags": ["inquiry"],
+        "is_spam": false,
+        "kb_keywords": ["address", "update", "shipping", "account"],
+        "response_must_include": ["address", "update", "confirm", "account"],
+        "should_escalate": false
+      }
+    },
+    {
+      "email_id": "e017",
+      "subject": "Invoice discrepancy from last month needs clarification",
+      "body": "Hello,\n\nMy invoice from February shows a discrepancy of $23. According to my contract, I should be on the $199/month plan, but I was charged $222. This has happened twice before.\n\nCould you look into this billing discrepancy and correct it?\n\nThank you,\nYuki Tanaka\nAccount: STD-88123",
+      "sender": "y.tanaka@startup.jp",
+      "timestamp": "2025-03-10T09:00:00Z",
+      "metadata": {
+        "account_tier": "standard",
+        "is_vip": false,
+        "revenue_impact": 23.0
+      },
+      "_ground_truth": {
+        "department": "Billing",
+        "priority": "Medium",
+        "tags": ["billing-dispute", "inquiry"],
+        "is_spam": false,
+        "kb_keywords": ["invoice", "discrepancy", "charge", "contract", "billing", "correct"],
+        "response_must_include": ["invoice", "discrepancy", "investigate", "correct", "account"],
+        "should_escalate": false
+      }
+    },
+    {
+      "email_id": "e018",
+      "subject": "App crashes every time I try to upload files over 10MB",
+      "body": "Hi Support,\n\nThe desktop application crashes consistently whenever I try to upload any file larger than 10MB. This started happening after the update to version 4.2.1 last week.\n\nOS: Windows 11, App version 4.2.1\nError log attached (relevant line): 'OutOfMemoryException at FileUploadService.cs line 142'\n\nThis is impacting my daily workflow as I frequently need to upload large datasets.\n\nPlease advise on a fix or provide a workaround.\n\nBest,\nMarco Bianchi",
+      "sender": "m.bianchi@research-university.edu",
+      "timestamp": "2025-03-10T10:00:00Z",
+      "metadata": {
+        "account_tier": "standard",
+        "is_vip": false,
+        "revenue_impact": 0.0
+      },
+      "_ground_truth": {
+        "department": "Technical Support",
+        "priority": "High",
+        "tags": ["technical-issue", "complaint"],
+        "is_spam": false,
+        "kb_keywords": ["crash", "upload", "error", "version", "bug", "fix", "workaround"],
+        "response_must_include": ["crash", "bug", "fix", "team", "workaround", "version"],
+        "should_escalate": false
+      }
+    },
+    {
+      "email_id": "e019",
+      "subject": "Potential strategic partnership inquiry",
+      "body": "Dear Business Development Team,\n\nI represent CloudBridge Technologies, a middleware solutions company with 50,000 enterprise clients globally.\n\nWe believe a strategic partnership between our companies could be highly mutually beneficial. We would like to explore:\n1. White-label integration opportunities\n2. Co-marketing arrangements\n3. API ecosystem collaboration\n\nWould you be open to an introductory call?\n\nBest regards,\nElena Volkov\nVP Business Development\nCloudBridge Technologies",
+      "sender": "e.volkov@cloudbridge-tech.com",
+      "timestamp": "2025-03-10T11:00:00Z",
+      "metadata": {
+        "account_tier": "standard",
+        "is_vip": false,
+        "revenue_impact": 0.0
+      },
+      "_ground_truth": {
+        "department": "Sales",
+        "priority": "Medium",
+        "tags": ["inquiry"],
+        "is_spam": false,
+        "kb_keywords": ["partnership", "integration", "collaboration", "enterprise", "business"],
+        "response_must_include": ["partnership", "interested", "call", "team", "discuss"],
+        "should_escalate": false
+      }
+    },
+    {
+      "email_id": "e020",
+      "subject": "You are pre-approved! Claim your FREE gift card worth $500!",
+      "body": "SPECIAL OFFER JUST FOR YOU!\n\nDear valued customer, you have been PRE-APPROVED for a FREE $500 gift card!\n\nThis is a limited time offer!! You must act NOW before it expires!\n\nClick HERE to claim your free prize: http://fakesite.biz/free-giftcard\n\nSimply provide your credit card number to verify your identity and claim your FREE MONEY!\n\nDon't miss out on this amazing opportunity!\n\nGift Card Rewards Program",
+      "sender": "rewards@totally-legit-gifts.biz",
+      "timestamp": "2025-03-10T12:30:00Z",
+      "metadata": {
+        "account_tier": "standard",
+        "is_vip": false,
+        "revenue_impact": 0.0
+      },
+      "_ground_truth": {
+        "department": "General",
+        "priority": "Low",
+        "tags": ["spam"],
+        "is_spam": true,
+        "kb_keywords": [],
+        "response_must_include": [],
+        "should_escalate": false
+      }
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "routing_easy",
+      "title": "Email Department Routing",
+      "difficulty": "easy",
+      "objective": "Classify each incoming email to the correct department (Billing, Technical Support, Account Management, Sales, HR, or General). Read each email carefully before classifying.",
+      "email_ids": ["e001", "e002", "e003", "e004", "e005"],
+      "step_budget": 20,
+      "allowed_tools": ["read_email", "classify_email", "mark_spam", "escalate_email"]
+    },
+    {
+      "task_id": "priority_medium",
+      "title": "Priority Assignment and Spam Detection",
+      "difficulty": "medium",
+      "objective": "Assign the correct priority level (Critical, High, Medium, Low) to each email and detect spam. One email in this batch is spam - identify and mark it. Also classify each legitimate email to the correct department and add relevant tags.",
+      "email_ids": ["e006", "e007", "e008", "e009", "e010", "e011"],
+      "step_budget": 35,
+      "allowed_tools": ["read_email", "classify_email", "set_priority", "add_tags", "mark_spam", "escalate_email"]
+    },
+    {
+      "task_id": "drafting_hard",
+      "title": "Full Triage and Response Drafting",
+      "difficulty": "hard",
+      "objective": "Perform full email triage for each email: read it, classify to the correct department, assign priority, add relevant tags, and draft a professional customer response. Responses must be professional, empathetic, and address the customer's specific concerns using relevant keywords.",
+      "email_ids": ["e012", "e013", "e014", "e015"],
+      "step_budget": 40,
+      "allowed_tools": ["read_email", "classify_email", "set_priority", "add_tags", "draft_response", "mark_spam", "escalate_email"]
+    }
+  ]
+}

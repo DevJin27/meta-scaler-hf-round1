@@ -1,0 +1,56 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "openenv-emailtriage"
+version = "1.0.0"
+description = "EmailTriage — OpenEnv benchmark for customer support email classification and response drafting"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+keywords = ["openenv", "email", "triage", "rl", "benchmark", "reinforcement-learning"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "openenv-core[core]>=0.2.2",
+    "fastapi>=0.110.0",
+    "uvicorn[standard]>=0.27.0",
+    "pydantic>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-cov>=4.0.0",
+    "httpx>=0.25.0",
+]
+llm = [
+    "openai>=1.0.0",
+]
+
+[project.scripts]
+emailtriage-server   = "server.app:main"
+emailtriage-baseline = "baseline:main"
+
+[tool.setuptools]
+include-package-data = true
+packages = [".", "server", "tests"]
+
+[tool.setuptools.package-data]
+"." = ["data/*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.coverage.run]
+source = ["."]
+omit = ["tests/*", "server/app.py"]

@@ -1,0 +1,11 @@
+spec_version: 1
+
+name: email-triage-env
+
+type: space
+
+runtime: fastapi
+
+app: server.app:app
+
+port: 8000
