@@ -42,10 +42,13 @@ emailtriage-baseline = "baseline:main"
 
 [tool.setuptools]
 include-package-data = true
-packages = [".", "server", "tests"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["*", "server", "server.*", "tests", "tests.*"]
 
 [tool.setuptools.package-data]
-"." = ["data/*.json"]
+"*" = ["data/*.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
