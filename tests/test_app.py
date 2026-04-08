@@ -4,6 +4,7 @@ Tests:
   GET /tasks      — structure and content
   GET /grader     — known episode, unknown episode, missing param
   GET /baseline   — scripted backend (no API key), openai without key → 503
+  POST /demo/triage — ad-hoc triage preview for a raw email
   GET /landing    — HTML response
 
 These tests run against the real FastAPI app via TestClient (in-process,
@@ -171,6 +172,57 @@ class TestBaselineEndpoint:
         monkeypatch.delenv("OPENAI_API_KEY", raising=False)
         r = client.get("/baseline?backend=openai")
         assert r.status_code == 503
+
+
+# ---------------------------------------------------------------------------
+# POST /demo/triage
+# ---------------------------------------------------------------------------
+
+
+class TestDemoTriageEndpoint:
+    def test_legitimate_email_preview(self, client: TestClient):
+        r = client.post(
+            "/demo/triage",
+            json={
+                "sender": "alex.customer@example.com",
+                "subject": "Incorrect charge on my invoice",
+                "body": (
+                    "Hi team, I was charged twice on my latest invoice and need "
+                    "help with a refund. This is the third time this has happened."
+                ),
+            },
+        )
+        assert r.status_code == 200
+        data = r.json()
+        assert data["backend"] == "scripted"
+        assert data["spam"] is False
+        assert data["department"] == "Billing"
+        assert data["priority"] == "High"
+        assert "billing-dispute" in data["tags"]
+        assert "draft_response" in data["suggested_actions"]
+        assert data["response_text"]
+        assert data["explanation"]
+
+    def test_spam_email_preview(self, client: TestClient):
+        r = client.post(
+            "/demo/triage",
+            json={
+                "sender": "promo@totally-legit.example",
+                "subject": "Congratulations winner",
+                "body": (
+                    "Claim your prize now. Click here for free money and send "
+                    "your bank account details to receive your winnings."
+                ),
+            },
+        )
+        assert r.status_code == 200
+        data = r.json()
+        assert data["spam"] is True
+        assert data["department"] is None
+        assert data["priority"] is None
+        assert data["tags"] == ["spam"]
+        assert data["response_text"] is None
+        assert data["suggested_actions"] == ["read_email", "mark_spam"]
 
 
 # ---------------------------------------------------------------------------

@@ -221,6 +221,43 @@ class BaselineReport(BaseModel):
     )
 
 
+class EmailTriagePreviewRequest(BaseModel):
+    """Input payload for ad-hoc triage of a user-provided email."""
+
+    sender: str = Field(..., description="Sender email address")
+    subject: str = Field(..., min_length=1, description="Email subject line")
+    body: str = Field(..., min_length=1, description="Email body")
+
+
+class EmailTriagePreviewResponse(BaseModel):
+    """Scripted triage preview for a single user-provided email."""
+
+    backend: Literal["scripted"] = Field(
+        default="scripted", description="Heuristic engine used for the preview"
+    )
+    sender: str = Field(..., description="Sender email address")
+    subject: str = Field(..., description="Email subject line")
+    suggested_actions: List[ToolName] = Field(
+        default_factory=list, description="Sequence of tools the agent would apply"
+    )
+    spam: bool = Field(..., description="Whether the email looks like spam")
+    department: Optional[DepartmentLabel] = Field(
+        default=None, description="Predicted department for legitimate mail"
+    )
+    priority: Optional[PriorityLabel] = Field(
+        default=None, description="Predicted priority for legitimate mail"
+    )
+    tags: List[TagLabel] = Field(
+        default_factory=list, description="Suggested semantic tags"
+    )
+    response_text: Optional[str] = Field(
+        default=None, description="Draft customer-facing reply for legitimate mail"
+    )
+    explanation: List[str] = Field(
+        default_factory=list, description="Human-readable rationale for the prediction"
+    )
+
+
 class TasksResponse(BaseModel):
     """Response payload for the /tasks endpoint."""
 

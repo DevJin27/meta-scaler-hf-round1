@@ -35,21 +35,27 @@ try:
         BaselineReport,
         EmailTriageAction,
         EmailTriageObservation,
+        EmailTriagePreviewRequest,
+        EmailTriagePreviewResponse,
         GraderReport,
         TasksResponse,
     )
     from emailtriage.server.email_triage_environment import EmailTriageEnvironment
 except ImportError:
-    from baseline import DEFAULT_BASELINE_MODEL, run_baseline
+    from baseline import DEFAULT_BASELINE_MODEL, run_baseline, scripted_triage_preview
     from email_core import EmailTaskCatalog, EpisodeRegistry
     from models import (
         BaselineReport,
         EmailTriageAction,
         EmailTriageObservation,
+        EmailTriagePreviewRequest,
+        EmailTriagePreviewResponse,
         GraderReport,
         TasksResponse,
     )
     from server.email_triage_environment import EmailTriageEnvironment
+else:
+    from emailtriage.baseline import scripted_triage_preview
 
 # ---------------------------------------------------------------------------
 # Singletons (shared across all concurrent sessions)
@@ -240,6 +246,18 @@ async def baseline(
         backend=backend,
         session_factory=_InProcessSession,
         grader_fetcher=_grader_fetcher,
+    )
+
+
+@app.post("/demo/triage", response_model=EmailTriagePreviewResponse, tags=["Demo"])
+async def demo_triage(
+    payload: EmailTriagePreviewRequest,
+) -> EmailTriagePreviewResponse:
+    """Preview scripted triage for a user-provided email."""
+    return scripted_triage_preview(
+        sender=payload.sender,
+        subject=payload.subject,
+        body=payload.body,
     )
 
 

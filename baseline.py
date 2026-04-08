@@ -29,6 +29,7 @@ try:
         BaselineTaskResult,
         EmailTriageAction,
         EmailTriageObservation,
+        EmailTriagePreviewResponse,
         GraderReport,
     )
 except ImportError:
@@ -38,6 +39,7 @@ except ImportError:
         BaselineTaskResult,
         EmailTriageAction,
         EmailTriageObservation,
+        EmailTriagePreviewResponse,
         GraderReport,
     )
 
@@ -81,6 +83,75 @@ _SPAM_INDICATORS: List[str] = [
     "million dollars", "claim", "free money", "free gift",
     "pre-approved", "gift card", "click here", "verify your identity",
     "bank account details", "limited time",
+]
+
+_HARD_SPAM_KEYWORDS: List[str] = [
+    "lottery", "million dollars", "bank account details", "wire transfer",
+    "claim your prize",
+]
+
+_AUTOMATED_SENDER_HINTS: List[str] = [
+    "no-reply", "noreply", "do-not-reply", "donotreply", "notify",
+    "notification", "notifications", "mailer-daemon",
+]
+
+_ACCOUNT_NOTIFICATION_KEYWORDS: List[str] = [
+    "verification code", "one-time verification code", "one-time code",
+    "passcode", "otp", "security code", "sign in code", "sign-in code",
+    "login code", "verification email", "verify your email",
+    "confirm your email", "account creation", "create your account",
+    "password reset", "reset your password", "reset code",
+    "authentication code", "two-factor", "2fa",
+]
+
+_BILLING_NOTIFICATION_KEYWORDS: List[str] = [
+    "receipt", "invoice attached", "invoice is ready", "invoice available",
+    "payment received", "payment confirmation", "subscription renewed",
+    "subscription renewal", "billing statement", "charge receipt",
+    "transaction receipt", "failed payment", "payment failed",
+]
+
+_ORDER_NOTIFICATION_KEYWORDS: List[str] = [
+    "order confirmation", "tracking number", "shipment", "shipped",
+    "out for delivery", "delivery update", "delivered",
+]
+
+_CALENDAR_INVITE_KEYWORDS: List[str] = [
+    "invitation from google calendar",
+    "view on google calendar",
+    "you are receiving this email because you are subscribed to calendar notifications",
+    "reply yes",
+    "reply no",
+    "reply maybe",
+]
+
+_MARKETING_KEYWORDS: List[str] = [
+    "unsubscribe", "manage preferences", "view in browser", "newsletter",
+    "product update", "special offer", "limited time offer",
+    "limited-time offer", "% off", "promotion", "promo code",
+    "new features", "feature roundup",
+]
+
+_SECURITY_ALERT_KEYWORDS: List[str] = [
+    "suspicious login", "new login", "new sign-in", "sign-in attempt",
+    "login attempt", "security alert", "unrecognized device",
+    "password changed", "account compromised",
+]
+
+_STATUS_ALERT_KEYWORDS: List[str] = [
+    "service outage", "degraded performance", "incident update",
+    "resolved incident", "maintenance window",
+]
+
+_BOILERPLATE_LINE_KEYWORDS: List[str] = [
+    "if you have any questions or concerns",
+    "this email was sent to",
+    "you are receiving this email",
+    "privacy policy",
+    "manage preferences",
+    "unsubscribe",
+    "view in browser",
+    "all rights reserved",
 ]
 
 _PRIORITY_KEYWORDS: Dict[str, List[str]] = {
@@ -210,6 +281,313 @@ def _select_tags(text: str) -> List[str]:
         if len(tags) == 3:
             break
     return tags
+
+
+def _matched_keywords(text: str, keywords: List[str]) -> List[str]:
+    """Return matched keywords in the order they appear in *keywords*."""
+    low = text.lower()
+    return [kw for kw in keywords if kw in low]
+
+
+def _sender_display_name(sender: str) -> str:
+    """Convert an email address into a readable customer name."""
+    local_part = sender.split("@", 1)[0]
+    cleaned = local_part.replace(".", " ").replace("_", " ").strip()
+    return " ".join(part.capitalize() for part in cleaned.split()) or "Valued Customer"
+
+
+def _contains_any(text: str, keywords: List[str]) -> bool:
+    """Return True if any keyword appears in *text*."""
+    low = text.lower()
+    return any(keyword in low for keyword in keywords)
+
+
+def _is_automated_sender(sender: str) -> bool:
+    """Heuristic for one-way system senders."""
+    local_part = sender.split("@", 1)[0].lower()
+    return any(hint in local_part for hint in _AUTOMATED_SENDER_HINTS)
+
+
+def _strip_preview_boilerplate(body: str) -> str:
+    """Remove common footer/disclaimer lines before preview classification."""
+    kept_lines: List[str] = []
+    for raw_line in body.splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+        low = line.lower()
+        if any(keyword in low for keyword in _BOILERPLATE_LINE_KEYWORDS):
+            continue
+        if low.startswith("©") or low.startswith("copyright"):
+            continue
+        kept_lines.append(line)
+    return "\n".join(kept_lines)
+
+
+def _build_preview_text(subject: str, body: str) -> str:
+    """Build the text used for preview heuristics after footer cleanup."""
+    cleaned_body = _strip_preview_boilerplate(body)
+    return f"{subject} {cleaned_body}".strip()
+
+
+def _preview_notification_kind(sender: str, subject: str, body: str) -> Optional[str]:
+    """Classify a non-spam message into a preview-only special bucket."""
+    text = f"{subject} {body}"
+
+    if _contains_any(text, _SECURITY_ALERT_KEYWORDS):
+        return "security_alert"
+    if subject.lower().startswith("invitation:") or _contains_any(text, _CALENDAR_INVITE_KEYWORDS):
+        return "calendar_invite"
+    if _contains_any(text, _ACCOUNT_NOTIFICATION_KEYWORDS):
+        return "account_notification"
+    if _contains_any(text, _BILLING_NOTIFICATION_KEYWORDS):
+        return "billing_notification"
+    if _contains_any(text, _ORDER_NOTIFICATION_KEYWORDS):
+        return "order_notification"
+    if _contains_any(text, _STATUS_ALERT_KEYWORDS):
+        return "status_alert"
+    if _contains_any(text, _MARKETING_KEYWORDS):
+        return "marketing"
+    if _is_automated_sender(sender) and _contains_any(text, ["verification", "receipt", "invoice", "tracking", "account"]):
+        return "auto_generated"
+    return None
+
+
+def _preview_detect_spam(sender: str, subject: str, body: str) -> tuple[bool, List[str]]:
+    """Detect obvious spam without confusing newsletters with scams."""
+    text = f"{subject} {body}"
+    hard_hits = _matched_keywords(text, _HARD_SPAM_KEYWORDS)
+    spam_hits = _matched_keywords(text, _SPAM_INDICATORS)
+    looks_like_marketing = _contains_any(text, _MARKETING_KEYWORDS)
+
+    if hard_hits:
+        return True, hard_hits
+    if len(spam_hits) >= 2 and not looks_like_marketing:
+        return True, spam_hits
+    return False, spam_hits
+
+
+def _notification_tags(kind: str, text: str) -> List[str]:
+    """Return tags for known notification categories."""
+    if kind == "account_notification":
+        return ["password-reset"] if "password reset" in text.lower() else []
+    if kind == "billing_notification":
+        return ["payment-failed"] if "payment failed" in text.lower() or "failed payment" in text.lower() else []
+    if kind == "order_notification":
+        return ["order-status"]
+    if kind == "status_alert":
+        return ["service-outage"]
+    return []
+
+
+def scripted_triage_preview(
+    *,
+    sender: str,
+    subject: str,
+    body: str,
+) -> EmailTriagePreviewResponse:
+    """Preview how the scripted baseline would triage a single raw email."""
+    full_text = f"{subject} {body}"
+    preview_text = _build_preview_text(subject, body)
+    is_spam, spam_hits = _preview_detect_spam(sender, subject, body)
+
+    if is_spam:
+        return EmailTriagePreviewResponse(
+            sender=sender,
+            subject=subject,
+            suggested_actions=["read_email", "mark_spam"],
+            spam=True,
+            tags=["spam"],
+            explanation=[
+                f"Matched spam signals: {', '.join(spam_hits[:5])}.",
+                "Recommended action: mark as spam and skip drafting a reply.",
+            ],
+        )
+
+    kind = _preview_notification_kind(sender, subject, body)
+    explanation: List[str] = []
+    tags: List[str]
+    response_text: Optional[str]
+
+    if kind == "security_alert":
+        department = "Technical Support"
+        priority = "High"
+        tags = _notification_tags(kind, full_text)
+        response_text = None
+        explanation.append(
+            "Detected an automated security alert from sign-in or account-protection language."
+        )
+        explanation.append(
+            "Assigned High priority because account-security events should be reviewed quickly."
+        )
+    elif kind == "status_alert":
+        department = "Technical Support"
+        priority = "High"
+        tags = _notification_tags(kind, full_text)
+        response_text = None
+        explanation.append(
+            "Detected a service-status or outage notification."
+        )
+        explanation.append(
+            "Assigned High priority because outage notices can affect active work, but no reply draft was created because this is a system update."
+        )
+    elif kind == "account_notification":
+        department = "Account Management"
+        priority = "Low"
+        tags = _notification_tags(kind, full_text)
+        response_text = None
+        explanation.append(
+            "Detected an account-management notification from verification, password, or account-creation language."
+        )
+        explanation.append(
+            "Assigned Low priority because this reads like an informational system email rather than a support request."
+        )
+    elif kind == "billing_notification":
+        department = "Billing"
+        priority = (
+            "High"
+            if _contains_any(full_text, ["payment failed", "failed payment"])
+            else "Low"
+        )
+        tags = _notification_tags(kind, full_text)
+        response_text = None
+        explanation.append(
+            "Detected an automated billing notification from receipt, invoice, or payment language."
+        )
+        explanation.append(
+            f"Assigned {priority} priority because this is a one-way billing update rather than a conversational support email."
+        )
+    elif kind == "order_notification":
+        department = "Account Management"
+        priority = "Low"
+        tags = _notification_tags(kind, full_text)
+        response_text = None
+        explanation.append(
+            "Detected an order or delivery status notification."
+        )
+        explanation.append(
+            "Assigned Low priority because it looks informational and does not ask for support."
+        )
+    elif kind == "marketing":
+        department = "Sales"
+        priority = "Low"
+        tags = []
+        response_text = None
+        explanation.append(
+            "Detected a marketing or newsletter email from promotional language such as unsubscribe or product-update links."
+        )
+        explanation.append(
+            "Assigned Low priority and skipped drafting a reply because this is promotional, not a direct support conversation."
+        )
+    elif kind == "calendar_invite":
+        department = "General"
+        priority = "Low"
+        tags = []
+        response_text = None
+        explanation.append(
+            "Detected a calendar invitation or meeting notification."
+        )
+        explanation.append(
+            "Assigned Low priority and skipped drafting a reply because this is scheduling information, not a support email."
+        )
+    elif kind == "auto_generated":
+        low_text = full_text.lower()
+        if _contains_any(low_text, ["invoice", "receipt", "payment", "charge"]):
+            department = "Billing"
+            tags = []
+        elif _contains_any(low_text, ["tracking", "shipment", "delivery"]):
+            department = "Account Management"
+            tags = ["order-status"]
+        elif _contains_any(low_text, ["account", "profile", "preferences"]):
+            department = "Account Management"
+            tags = []
+        else:
+            department = "General"
+            tags = []
+        priority = "Low"
+        response_text = None
+        explanation.append(
+            "Detected an automated system notification from a one-way sender and transactional wording."
+        )
+        explanation.append(
+            f"Assigned Low priority and routed it to {department} because it looks informational rather than conversational."
+        )
+    else:
+        department_hits = {
+            dept: _matched_keywords(preview_text, keywords)
+            for dept, keywords in _DEPT_KEYWORDS.items()
+        }
+        department = _score_department(preview_text)
+        matched_priority_level = next(
+            (
+                level
+                for level in ("Critical", "High", "Medium", "Low")
+                if _matched_keywords(preview_text, _PRIORITY_KEYWORDS[level])
+            ),
+            None,
+        )
+        priority = _score_priority(preview_text, department)
+        tags = _select_tags(preview_text)
+
+        if department_hits.get(department):
+            explanation.append(
+                f"Routed to {department} from keywords: {', '.join(department_hits[department][:5])}."
+            )
+        else:
+            explanation.append(
+                "No strong department keywords matched, so it falls back to General."
+            )
+
+        if matched_priority_level is not None:
+            priority_hits = _matched_keywords(preview_text, _PRIORITY_KEYWORDS[matched_priority_level])
+            explanation.append(
+                f"Assigned {priority} priority from urgency signals: {', '.join(priority_hits[:5])}."
+            )
+        else:
+            explanation.append(
+                f"No urgency keywords matched, so it falls back to {priority} based on the routed department."
+            )
+
+        if _is_automated_sender(sender):
+            response_text = None
+            explanation.append(
+                "The sender looks automated, so no reply draft was created."
+            )
+        else:
+            template = _RESPONSE_TEMPLATES.get(department, _RESPONSE_TEMPLATES["General"])
+            response_text = template.format(name=_sender_display_name(sender))
+
+    if tags:
+        explanation.append(
+            f"Suggested tags: {', '.join(tags)}."
+        )
+    else:
+        explanation.append(
+            "No tag heuristics matched this message."
+        )
+
+    if response_text is None:
+        explanation.append(
+            "No reply draft was created because this email looks non-conversational or one-way."
+        )
+
+    suggested_actions: List[str] = ["read_email", "classify_email", "set_priority"]
+    if tags:
+        suggested_actions.append("add_tags")
+    if response_text is not None:
+        suggested_actions.append("draft_response")
+
+    return EmailTriagePreviewResponse(
+        sender=sender,
+        subject=subject,
+        suggested_actions=suggested_actions,
+        spam=False,
+        department=department,
+        priority=priority,
+        tags=tags,
+        response_text=response_text,
+        explanation=explanation,
+    )
 
 
 # ---------------------------------------------------------------------------

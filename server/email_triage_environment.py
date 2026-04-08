@@ -62,6 +62,7 @@ class EmailTriageEnvironment(Environment):
         self,
         task_id: str = DEFAULT_TASK,
         seed: Optional[int] = None,
+        episode_id: Optional[str] = None,
         **kwargs: object,
     ) -> EmailTriageObservation:
         """Start a new episode.
@@ -78,11 +79,33 @@ class EmailTriageEnvironment(Environment):
         """
         self._runtime = EpisodeRuntime(catalog=self._catalog, task_id=task_id)
         obs = self._runtime.to_observation(step_reward=0.0, bonuses={}, penalties={})
+        self._registry.store_runtime(self._runtime)
         # Persist initial grader report so /grader is queryable immediately
         self._registry.store(self._runtime.compute_grader_report())
         return obs
 
-    def step(self, action: EmailTriageAction) -> EmailTriageObservation:
+    async def reset_async(
+        self,
+        task_id: str = DEFAULT_TASK,
+        seed: Optional[int] = None,
+        episode_id: Optional[str] = None,
+        **kwargs: object,
+    ) -> EmailTriageObservation:
+        """Async compatibility wrapper for newer openenv-core servers."""
+        return self.reset(
+            task_id=task_id,
+            seed=seed,
+            episode_id=episode_id,
+            **kwargs,
+        )
+
+    def step(
+        self,
+        action: EmailTriageAction,
+        episode_id: Optional[str] = None,
+        timeout_s: Optional[float] = None,
+        **kwargs: object,
+    ) -> EmailTriageObservation:
         """Execute *action* and return the next observation.
 
         Raises
@@ -90,6 +113,9 @@ class EmailTriageEnvironment(Environment):
         RuntimeError
             If ``reset()`` has not been called first.
         """
+        if self._runtime is None and episode_id is not None:
+            self._runtime = self._registry.get_runtime(episode_id)
+
         if self._runtime is None:
             raise RuntimeError(
                 "reset() must be called before step(). "
@@ -104,11 +130,28 @@ class EmailTriageEnvironment(Environment):
 
         obs = self._runtime.to_observation(step_reward, bonuses, penalties)
 
+        self._registry.store_runtime(self._runtime)
         # Keep grader report up-to-date after every step
         self._registry.store(self._runtime.compute_grader_report())
 
         return obs
 
+    async def step_async(
+        self,
+        action: EmailTriageAction,
+        episode_id: Optional[str] = None,
+        timeout_s: Optional[float] = None,
+        **kwargs: object,
+    ) -> EmailTriageObservation:
+        """Async compatibility wrapper for newer openenv-core servers."""
+        return self.step(
+            action,
+            episode_id=episode_id,
+            timeout_s=timeout_s,
+            **kwargs,
+        )
+
+    @property
     def state(self) -> EmailTriageState:
         """Return the current episode state without advancing it."""
         if self._runtime is None:

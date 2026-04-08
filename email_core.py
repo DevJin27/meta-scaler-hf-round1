@@ -797,16 +797,25 @@ class EpisodeRuntime:
 
 
 class EpisodeRegistry:
-    """Thread-safe storage for grader reports keyed by episode_id."""
+    """Thread-safe storage for episode runtime and grader report data."""
 
     def __init__(self) -> None:
         self._reports: Dict[str, GraderReport] = {}
+        self._runtimes: Dict[str, EpisodeRuntime] = {}
         self._lock = threading.Lock()
 
     def store(self, report: GraderReport) -> None:
         with self._lock:
             self._reports[report.episode_id] = report
 
+    def store_runtime(self, runtime: EpisodeRuntime) -> None:
+        with self._lock:
+            self._runtimes[runtime.episode_id] = runtime
+
     def get(self, episode_id: str) -> Optional[GraderReport]:
         with self._lock:
             return self._reports.get(episode_id)
+
+    def get_runtime(self, episode_id: str) -> Optional[EpisodeRuntime]:
+        with self._lock:
+            return self._runtimes.get(episode_id)

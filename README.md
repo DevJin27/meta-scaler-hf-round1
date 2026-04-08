@@ -194,6 +194,15 @@ curl 'http://localhost:8000/baseline?backend=scripted'
 
 # Run LLM baseline (requires OPENAI_API_KEY)
 OPENAI_API_KEY=sk-... curl 'http://localhost:8000/baseline?backend=openai&model=gpt-4o-mini'
+
+# Preview triage for one of your own emails
+curl -X POST http://localhost:8000/demo/triage \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "sender": "alex.customer@example.com",
+    "subject": "Incorrect charge on my invoice",
+    "body": "Hi team, I was charged twice on my latest invoice and need help with a refund."
+  }'
 ```
 
 ### Use the Python client
